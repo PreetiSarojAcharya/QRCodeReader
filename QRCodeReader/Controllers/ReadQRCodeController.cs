@@ -5,7 +5,7 @@ namespace QRCodeReader.Controllers
     public class ReadQRCodeController : Controller
     {
         // GET: ReadQRCode
-        public ActionResult Index(string jsonReceiverInCsharpObjecName)
+        public ActionResult Index()
         {
           return View();          
         }     
