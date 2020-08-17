@@ -1,318 +1,45 @@
 ﻿<html>
 <head>
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script>            
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js" ></script>
+    <script type="text/javascript">
 
-            // Attach a submit handler to the form
-            $("#form").submit(function (event) {
-
-                // Stop form from submitting normally
-                event.preventDefault();
-
-                // Get some values from elements on the page:
-                var $form = $(this),
-                  fileurl = $form.find("input[name='file']").val(),
-                  url = "http://api.qrserver.com/v1/read-qr-code/?fileurl=" + fileurl + "";
-
-                // Send the data using post
-                var posting = $.post(url, { s: term });
-
-                //Ajax Function to send a get request
+        $(document).ready(function () {
+            $('#submitQR').click(function () {
+                var form = new FormData($("#formQR")[0]);
+               var actualurl = "http://api.qrserver.com/v1/read-qr-code/";               
                 $.ajax({
-                    type: "GET",
-                    url: url,
-                    dataType: "jsonp",
-                    success: function (response) {
-                        //if request if made successfully then the response represent the data
-
-                        $("#resp").empty().append(response);
+                    url: actualurl,
+                    method: "POST",
+                    dataType: 'json',
+                    data: form,
+                    contentType: false,
+                    processData: false,
+                    success: function (result) {
+                        $('#divQRResult').text(JSON.stringify(result));
+                    },
+                    error: function (err) {
+                        alert('Error occurred!');
                     }
                 });
-
             });
-        
-            
+        });
     </script>
 </head>
 <body>
-    <form id="form" enctype="multipart/form-data" action="http://api.qrserver.com/v1/read-qr-code/" method="POST">
-               <!-- MAX_FILE_SIZE (maximum file size in bytes) must precede the file input field used to upload the QR code image -->
-        <input type="hidden" name="MAX_FILE_SIZE" value="1048576" />
+
+
+    <form id="formQR" name="formQR" enctype="multipart/form-data">
+
         <!-- The "name" of the input field has to be "file" as it is the name of the POST parameter -->
-        Choose QR code image to read/scan: <input name="file" type="file" />
-        <input type="submit" value="submit" >
-       
-    </form>
-    Response: <p id="resp">
-    </p>
-</body>
+        Choose QR code image to read/scan: <input id='fileQR' name="file" type="file" />
+        <input type="submit" value="submit" id="submitQR"><br /><br />
+        <div>
+            <b>JSON Result:</b><br /><br />
 
-
-</html>
-
-
-
-@*Method 1*@
-
-    @*<html>
-    <head>
-        <script language="Javascript">
-            function fileUpload() {
-
-                var formData = new FormData(this.form);
-                //console.log(formData.serialize());
-
-
-                $.ajax({
-                  type: "POST",
-                  url: "http://api.qrserver.com/v1/read-qr-code/",
-                processData: false,
-                data: formData,
-                success: function (data) {
-                    $("#resp").html(JSON.stringify(data));
-                },
-                error: function (e) {
-                    console.log("ERROR : ", e.responseText);
-                }
-                });
-
-
-            //$("#form").submit(function (e) {
-                //    e.preventDefault(); // avoid to execute the actual submit of the form.
-                //    var formData = new FormData(this.form);
-                //   // console.log(form.serialize());
-                //    $.ajax({
-                //        type: "POST",
-                //        url: "http://api.qrserver.com/v1/read-qr-code/",
-                //        processData: false,
-                //        data: formData,
-                //        success: function (data) {
-                //            $("#resp").html(JSON.stringify(data));
-                //        },
-                //        error: function (e) {
-                //            console.log("ERROR : ", e.responseText);
-                //        }
-                //    });
-                //});
-
-                $("#form").submit(function (e) {
-                    e.preventDefault(); // avoid to execute the actual submit of the form.
-                    var form = $(this);
-                    console.log(form.serialize());
-                    $.ajax({
-                        type: "POST",
-                        url: "http://api.qrserver.com/v1/read-qr-code/",
-                        processData: false,
-                        data: form.serialize(),
-                        success: function (data) {
-                            $("#resp").html(JSON.stringify(data));
-                        },
-                        error: function (e) {
-                            console.log("ERROR : ", e.responseText);
-                        }
-                    });
-                });
-
-
-                //method1
-                //var formData = new FormData();
-                //var fileField = document.querySelector("input[type='file']");
-
-                //formData.append('username', 'abc123');
-                // formData.append('fileurl', fileField.files[0]);
-
-                //fetch('http://api.qrserver.com/v1/read-qr-code/', {
-                //    method: 'POST',
-                //    body: formData
-                //})
-                //.then(response => response.json())
-                //.catch(error => console.error('Error:', error))
-                //.then(response => console.log('Success:', JSON.stringify(response)))
-
-
-
-                //method2
-        //grab form data
-        //var formData = new FormData($('form')[0]);
-        //console.log(formData);
-
-        //	$.ajax({
-        //		url: 'http://api.qrserver.com/v1/read-qr-code/',
-        //		method: 'POST',
-        //		dataType: 'json',
-        //		data: formData,
-        //		//async: true,
-        //		cache: false,
-        //		contentType: false,
-        //		//crossDomain: true,
-        //		processData: false,
-        //		success: function returnedResult(result){
-        //			console.log(result);
-        //		},
-        //		error: alert('error')
-        //	});
-
-
-        //return false;
-    }
-
-    //$(document).ready(function() {
-
-    //});
-        </script>
-    </head>
-        <body>
-            <form id="form" enctype="multipart/form-data" action="http://api.qrserver.com/v1/read-qr-code/" method="POST">
-                <input type="file" name="file" value="fileupload" id="fileupload">
-                <label for="fileupload">Choose QR code image to read/scan:</label>
-                <input type="submit" value="submit" onclick="fileUpload(); return false;">
-                <button type="button"  value="submit" class="btn btn-default" onClick="fileUpload(); return false;">Submit</button>
-            </form>
-            Response: <p id="resp">
-            </p>
-        </body>
-        </html>*@
-
-
-
-@*Method 1*@
-@*@using (Html.BeginForm("ProcessForm", "ReadQRCode", FormMethod.Post))
-{
-   
-    <br />
-    <input type="file" name="file" value="fileupload" id="fileupload">
-    <label for="fileupload">  Choose QR code image to read/scan:</label>
-    <input type="submit" name="submit" value="submit" />
-   
-}*@
-
-@*Method 2*@
-  @*<html>
-<head>
-    <title>QR Code Reader</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-    <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-    <script language="Javascript">
-
-        $( 'form#test' ).submit(function(){
-            var data = new FormData( $( 'form#test' )[ 0 ] );
-
-            $.ajax( {
-                processData: false,
-                contentType: false,
-
-                data: data,
-                dataType: 'json',
-                type: $( this ).attr( 'method' ),
-                url: 'yourapi.php',
-                success: function( feedback ){
-                    console.log( "the feedback from your API: " + feedback );
-                }
-            });})
-    </script>
-</head>
-<body>
-    <form id='test' enctype="multipart/form-data" action="http://api.qrserver.com/v1/read-qr-code/" method="POST">
-        <input type="file" name="file" value="fileupload" id="fileupload">
-        <label for="fileupload">  Choose QR code image to read/scan:</label>
-       
-        <button type='submit'>submit</button>
-    </form>
-</body>
-    </html>*@
-
-
-@*Method 3*@
-@*<html>
-<head>
-    <title>QR Code Reader</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-    <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-    <script language="Javascript">
-        function fileUpload() {
-
-            var formData = new FormData($('form')[0]);
-            console.log(formData);
-        
-
-            $.ajax({
-                type: 'POST',
-                url: "http://api.qrserver.com/v1/read-qr-code/",
-                dataType: 'json',
-                data: JSON.stringify({
-                    formData
-                }),
-                success: function (data) {
-                },
-                error: function (error) {
-                }
-            });
-            //method1
-            //var formData = new FormData();
-            //var fileField = document.querySelector("input[type='file']");
-
-            //formData.append('username', 'abc123');
-            // formData.append('fileurl', fileField.files[0]);
-
-            //fetch('http://api.qrserver.com/v1/read-qr-code/', {
-            //    method: 'POST',
-            //    body: formData
-            //})
-            //.then(response => response.json())
-            //.catch(error => console.error('Error:', error))
-            //.then(response => console.log('Success:', JSON.stringify(response)))
-
-
-           
-            //method2
-	//grab form data
-	//var formData = new FormData($('form')[0]);
-	//console.log(formData);
-
-	//	$.ajax({
-	//		url: 'http://api.qrserver.com/v1/read-qr-code/',
-	//		method: 'POST',
-	//		dataType: 'json',
-	//		data: formData,
-	//		//async: true,
-	//		cache: false,
-	//		contentType: false,
-	//		//crossDomain: true,
-	//		processData: false,
-	//		success: function returnedResult(result){
-	//			console.log(result);
-	//		},
-	//		error: alert('error')
-	//	});
-
-
-	//return false;
-}
-
-$(document).ready(function() {
-
-});
-    </script>
-</head>
-<body>
-
-    <form role="form" enctype="multipart/form-data" action="http://api.qrserver.com/v1/read-qr-code/" method="POST">
-        <!-- MAX_FILE_SIZE (maximum file size in bytes) must precede the file input field used to upload the QR code image -->
-        <input type="hidden" name="MAX_FILE_SIZE" value="1048576" />
-        <div class="form-group">
-            <!-- The "name" of the input field has to be "file" as it is the name of the POST parameter -->
-            <label for="file">Choose QR code image to read/scan:</label>
-            <input type="file" class="form-control" id="file" name="file">
+            <div id="divQRResult"></div>
         </div>
-        <!-- <button type="button" class="btn btn-default" onClick="fileUpload(this.form,'http://api.qrserver.com/v1/read-qr-code/','upload'); return false;">Submit</button> -->
-        <button type="button" class="btn btn-default" onClick="fileUpload(); return false;">Submit</button>
     </form>
-
-
-    @*<div id="upload"></div>
 </body>
-</html>*@
+</html>
 
 
